@@ -31,7 +31,7 @@ const { Server } = require("socket.io");
 
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5000",
+      origin: "http://localhost:3000",
       methods: ["GET", "POST"],
     },
   });
@@ -39,11 +39,21 @@ const io = new Server(server, {
 const port = 5000
 
 io.on("connection", (socket) => {
-  console.log(socket.id)
+  console.log("User terhubung: ", socket.id)
+
+  socket.on("join-group-chat", (data) => {
+    socket.join(data.groupChat)
+    console.log("User dengan ID:", socket.id, "dan username", data.username ,"telah masuk ke group chat", data.groupChat)
+  })
+
+  socket.on("send-msg", (data) => {
+    socket.to(data.groupChat).emit("receive-msg", data)
+  })
 
   socket.on("disconnect", () => {
     console.log("Disconnected", socket.id)
   })
+
 })
 
 /*
@@ -92,7 +102,7 @@ app.post('/upload', upload.single('file') ,function (req, res, next) {
 })
 */
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log("Server menyala")
 })
 
