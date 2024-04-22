@@ -1,3 +1,5 @@
+
+//untuk keperluan pemilihan index random pada array
 function chooseRandom(min, max){
     return Math.floor(Math.random() * (max - min) + min)
 }
@@ -44,7 +46,8 @@ function PBB(a, b){
     return PBB(small, big % small)
 }
 
-//e = salah satu bagian kunci publik, e koprima dengan n
+//e salah satu bagian kunci publik
+//menghasilkan random e yang koprima dengan n
 function generatePublicKey(num){
     let coprime = chooseRandom(num/3, num)
 
@@ -64,7 +67,7 @@ console.log(e)
 function generatePrivateKey(e){
     let k = 1
 
-    while(((1+k*totientN)/e)%1 !== 0){
+    while(((1+k*totientN)/e)%1 !== 0){ //bilangan bulat bersisa 0 jika dibagi oleh 1
         k += 1
     } 
     return (1+k*totientN)/e
@@ -72,20 +75,6 @@ function generatePrivateKey(e){
 
 let d = generatePrivateKey(e)
 console.log(d)
-
-function encryptModulo(message, e, n){
-    let i = 1
-    let result = 1
-
-    while(i <= e){
-        result *= message%n
-        result = result%n
-        i++
-    }
-
-    return result
-    
-}
 
 //encrypt: c = message^e mod n
 function encrypt(message, e, n){
@@ -103,6 +92,7 @@ function encrypt(message, e, n){
 
 let c = encrypt(1924, e, n)
 console.log(c)
+
 //decrypt: message = c^d mod n
 function decrypt(c, d, n){
     let i = 1
