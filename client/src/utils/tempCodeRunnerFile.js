@@ -1,1 +1,0 @@
-        console.log("Di coprime:", coprime, num)

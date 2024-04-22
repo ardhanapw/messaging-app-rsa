@@ -36,8 +36,6 @@ const io = new Server(server, {
     },
   });
 
-const port = 5000
-
 io.on("connection", (socket) => {
   console.log("User terhubung: ", socket.id)
 
@@ -48,6 +46,14 @@ io.on("connection", (socket) => {
 
   socket.on("send-msg", (data) => {
     socket.to(data.groupChat).emit("receive-msg", data)
+  })
+
+  socket.on("send-public-key", (data) => {
+    socket.to(data.groupChat).emit("receive-public-key", data)
+  })
+
+  socket.on("send-file", (data) => {
+    socket.to(data.groupChat).emit("receive-file", data)
   })
 
   socket.on("disconnect", () => {
@@ -101,6 +107,7 @@ app.post('/upload', upload.single('file') ,function (req, res, next) {
   }) 
 })
 */
+const port = 5000
 
 server.listen(port, () => {
     console.log("Server menyala")

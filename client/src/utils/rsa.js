@@ -1,4 +1,3 @@
-
 //untuk keperluan pemilihan index random pada array
 function chooseRandom(min, max){
     return Math.floor(Math.random() * (max - min) + min)
@@ -19,22 +18,17 @@ function generatePrime(num){
     return primes
 }
 
-let primes = generatePrime(10000)
+let primes = generatePrime(300)
 let p = primes[chooseRandom(primes.length/2, primes.length)]
 let q = primes[chooseRandom(primes.length*3/4, primes.length)]
-
-console.log(p, q)
+let n = p*q
 
 //totient function phi(n) = (p – 1)(q – 1)
 function totient(p, q){
     return (p-1)*(q-1)
 }
 
-let n = p*q
 let totientN = totient(p, q)
-console.log(n)
-console.log(totientN)
-
 
 function PBB(a, b){
     let big = Math.max(a, b)
@@ -59,9 +53,8 @@ function generatePublicKey(num){
 }
 
 let e = generatePublicKey(totientN)
-console.log(e)
 
-//d = salah satu bagian kunci privat, dihitung dengan algoritma euclidean
+//d = salah satu bagian kunci privat
 //ed ekuivalen 1 mod phi(n) -> d = (1 + k*phi(n))/e
 //k = 1, 2, 3, ... dimasukkan ke persamaan hingga didapat d yang bernilai bulat
 function generatePrivateKey(e){
@@ -74,39 +67,49 @@ function generatePrivateKey(e){
 }
 
 let d = generatePrivateKey(e)
-console.log(d)
-
-//encrypt: c = message^e mod n
-function encrypt(message, e, n){
-    let i = 1
-    let c = 1
-
-    while(i <= e){
-        c *= message%n
-        c = c%n
-        i++
-    }
-
-    return c
-}
-
-let c = encrypt(1924, e, n)
-console.log(c)
-
-//decrypt: message = c^d mod n
-function decrypt(c, d, n){
-    let i = 1
-    let message = 1
-
-    while(i <= d){
-        message *= c%n
-        message = message%n
-        i++
-    }
-
-    return message
-}
-console.log(decrypt(c, d, n))
 
 //kunci publik: (e, n)
 //kunci privat: (d, n)
+function getKey(){
+    return {private: d, public: e, n:n}
+}
+
+//encrypt: c = message^e mod n
+function encrypt(message, e, n){
+    let messageArr = message.split("")
+    let cArr = []
+
+    for(let idx = 0; idx < messageArr.length; idx++){
+        let i = 1
+        let c = 1
+        while(i <= e){
+            c *= messageArr[idx].charCodeAt(0)%n
+            c = c%n
+            i++
+        }
+        cArr.push(c)
+    }
+
+    return btoa(cArr.join(" "))
+}
+
+//decrypt: message = c^d mod n
+function decrypt(c, d, n){
+    let cArr = atob(c).split(" ")
+    let messageArr = []
+
+    for(let idx = 0; idx < cArr.length; idx++){
+        let i = 1
+        let message = 1
+        while(i <= d){
+            message *= cArr[idx]%n
+            message = message%n
+            i++
+        }
+        messageArr.push(String.fromCharCode(message))
+    }
+
+    return messageArr.join("")
+}
+
+export {getKey, encrypt, decrypt}

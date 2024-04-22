@@ -11,6 +11,12 @@ function App() {
   const [isJoined, setIsJoined] = useState(false)
 
 
+  const handleEnter = (event) => {
+    if (event.key === "Enter"){
+      joinGroupChat()
+    }
+  }
+
   const handleUsername = (event) => {
     setUsername(event.target.value)
   }
@@ -30,10 +36,10 @@ function App() {
   return (
     <div class="App">
       {isJoined === false?
-        <div class="joinChatContainer bg-red-600">
+        <div class="joinChatContainer">
           <p class="text-xl font-bold">Masuk</p>
           <input type = "text" placeholder = "Masukkan username.." onChange={handleUsername}></input>
-          <input type = "text" placeholder = "Masukkan nama group chat.." onChange={handleGroupChat}></input>
+          <input type = "text" placeholder = "Masukkan nama group chat.." onChange={handleGroupChat} onKeyDown={handleEnter}></input>
           <button onClick = {joinGroupChat}>Masuk ke group chat</button>
         </div>
         :
